@@ -1,14 +1,21 @@
 import re
 from typing import List
-
+import string
+import contractions
+from nltk.corpus import stopwords
+import nltk
 
 class TextCleaner:
     """Text cleaner for sentiment analysis - participants can enhance."""
     
     def __init__(self) -> None:
         """Initialize the text cleaner."""
-        # TODO: Participants can add configuration options here
-        # Examples: self.remove_urls = True, self.remove_stopwords = False, etc.
+        self.stop_words = set(stopwords.words('english'))
+        self.remove_urls_flag = True
+        self.remove_mentions_flag = True
+        self.remove_hashtags_flag = True
+        self.remove_stopwords_flag = True
+        self.expand_contractions_flag = True
         pass
         
     def clean_text(self, text: str) -> str:
@@ -31,12 +38,37 @@ class TextCleaner:
         """
         if not text:
             return ""
-            
-        # Basic cleaning - participants can enhance
-        cleaned = text.lower()
-        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         
-        return cleaned
+        #Lowercase
+        text = text.lower()
+
+        #Remove URLs
+        if self.remove_urls_flag:
+            text = self.remove_urls(text)
+
+        #Remove mentions
+        if self.remove_mentions_flag:
+            text = self.remove_mentions(text)
+
+        #Remove hashtags
+        if self.remove_hashtags_flag:
+            text = self.remove_hashtags(text)
+
+        #Expand contractions
+        if self.expand_contractions_flag:
+            text = self.handle_contractions(text)
+
+        #Remove punctuation and numbers
+        text = re.sub(r'[^a-z\s]', '', text)
+
+        #Remove stopwords
+        if self.remove_stopwords_flag:
+            text = self.remove_stopwords(text)
+
+        #Normalize spaces
+        text = re.sub(r'\s+', ' ', text).strip()
+
+        return text
         
     def clean_texts(self, texts: List[str]) -> List[str]:
         """
@@ -70,8 +102,7 @@ class TextCleaner:
         - Handle different URL formats
         - Preserve text around URLs
         """
-        # Function body - participants need to implement
-        return text
+        return re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
         
     def remove_mentions(self, text: str) -> str:
         """
@@ -87,8 +118,7 @@ class TextCleaner:
         - Remove @username patterns
         - Handle edge cases
         """
-        # Function body - participants need to implement
-        return text
+        return re.sub(r'@\w+', '', text)
         
     def remove_hashtags(self, text: str) -> str:
         """
@@ -104,8 +134,7 @@ class TextCleaner:
         - Remove #hashtag patterns
         - Decide whether to keep hashtag text or remove entirely
         """
-        # Function body - participants need to implement
-        return text
+        return re.sub(r'#', '', text)
         
     def remove_stopwords(self, text: str) -> str:
         """
@@ -122,8 +151,9 @@ class TextCleaner:
         - Use NLTK or custom stopword lists
         - Handle different languages
         """
-        # Function body - participants need to implement
-        return text
+        tokens = text.split()
+        filtered = [word for word in tokens if word not in self.stop_words]
+        return ' '.join(filtered)
         
     def handle_contractions(self, text: str) -> str:
         """
@@ -140,8 +170,7 @@ class TextCleaner:
         - Handle various contraction forms
         - Maintain text meaning
         """
-        # Function body - participants need to implement
-        return text
+        return contractions.fix(text)
 
 
 # TODO for participants - Additional text preprocessing features:

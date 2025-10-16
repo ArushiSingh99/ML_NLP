@@ -17,6 +17,7 @@ class TestTextCleaner:
     def test_initialization(self, cleaner):
         """Test TextCleaner initialization."""
         assert cleaner is not None
+        assert hasattr(cleaner, "stop_words")
     
     def test_clean_text_basic(self, cleaner):
         """Test basic text cleaning."""
@@ -25,6 +26,8 @@ class TestTextCleaner:
         
         # Basic test - participants can enhance
         assert cleaned == "i love this product! it's amazing!!!"
+        expected = "love product amazing"
+        assert cleaned == expected
     
     def test_clean_text_empty(self, cleaner):
         """Test cleaning empty text."""
@@ -45,47 +48,36 @@ class TestTextCleaner:
         assert cleaned[0] == "i love this!"
         assert cleaned[1] == "this is terrible!"
         assert cleaned[2] == "it's okay, nothing special."
-    
-    def test_remove_urls_placeholder(self, cleaner):
-        """Test URL removal placeholder."""
+
+        expected = ["love", "terrible", "okay nothing special"]
+        assert cleaned == expected
+
+    #Removed Placeholder functions
+
+    def test_remove_urls(self, cleaner):
         text = "Check out https://example.com for more info"
         result = cleaner.remove_urls(text)
-        
-        # TODO: Participants need to implement URL removal
-        # This test will pass with placeholder implementation
-        assert result == text  # Placeholder returns original text
-    
-    def test_remove_mentions_placeholder(self, cleaner):
-        """Test mention removal placeholder."""
+        assert result == "Check out  for more info"
+
+    def test_remove_mentions(self, cleaner):
         text = "Hey @john, what do you think?"
         result = cleaner.remove_mentions(text)
-        
-        # TODO: Participants need to implement mention removal
-        assert result == text  # Placeholder returns original text
-    
-    def test_remove_hashtags_placeholder(self, cleaner):
-        """Test hashtag removal placeholder."""
+        assert result == "Hey , what do you think?"
+
+    def test_remove_hashtags(self, cleaner):
         text = "This is #amazing and #awesome!"
         result = cleaner.remove_hashtags(text)
-        
-        # TODO: Participants need to implement hashtag removal
-        assert result == text  # Placeholder returns original text
-    
-    def test_remove_stopwords_placeholder(self, cleaner):
-        """Test stopword removal placeholder."""
+        assert result == "This is amazing and awesome!"
+
+    def test_remove_stopwords(self, cleaner):
         text = "I am very happy with this product"
         result = cleaner.remove_stopwords(text)
-        
-        # TODO: Participants need to implement stopword removal
-        assert result == text  # Placeholder returns original text
-    
-    def test_handle_contractions_placeholder(self, cleaner):
-        """Test contraction handling placeholder."""
+        assert result == "happy product"
+
+    def test_handle_contractions(self, cleaner):
         text = "I don't like this, it's terrible"
         result = cleaner.handle_contractions(text)
-        
-        # TODO: Participants need to implement contraction handling
-        assert result == text  # Placeholder returns original text
+        assert result == "I do not like this, it is terrible"
 
 
 # TODO for participants - Additional preprocessing tests to implement:
